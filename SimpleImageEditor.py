@@ -21,3 +21,26 @@ class SimpleImageEditor:
     def reset_image(self):
         self.actual = self.original.copy()
 
+    def rotate_cw(self):
+        ...
+
+    def rotate_ccw(self):
+        ...
+
+    def mirror(self):
+        ...
+
+    def invert_colors(self):
+        ...
+
+    def greyscale(self):
+        ...
+
+    def lighten(self):
+        ...
+
+    def darken(self):
+        ...
+
+    def enhance_edges(self):
+        ...
