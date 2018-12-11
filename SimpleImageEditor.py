@@ -34,7 +34,12 @@ class SimpleImageEditor:
         ...
 
     def greyscale(self):
-        ...
+        for y in range(self.actual.shape[1]):
+            for x in range(self.actual.shape[0]):
+                gray_component = 0.299 * self.actual[x][y][0] + 0.587 * self.actual[x][y][1] + 0.114 * self.actual[x][y][2]
+                self.actual[x, y, 0] = gray_component
+                self.actual[x, y, 1] = gray_component
+                self.actual[x, y, 2] = gray_component
 
     def lighten(self):
         ...
