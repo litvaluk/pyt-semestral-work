@@ -1,40 +1,99 @@
 import numpy as np
+import os
 from PIL import Image
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, uic, QtGui, QtCore
 
 
 class SimpleImageEditor:
-    def __init__(self, path):
-        self.original = np.asarray(Image.open(path))
+    def __init__(self, img_path):
+        # load image
+        self.original = np.asarray(Image.open(img_path))
         self.actual = self.original.copy()
+
+        # create app and main window
         self.app = QtWidgets.QApplication([])
-        self.main_window = QtWidgets.QWidget()
-        self.main_window.setWindowTitle('Simple Image Editor')
-        self.main_window.show()
+        self.main_window = QtWidgets.QMainWindow()
+
+        # load ui
+        with open('ui/main_window.ui') as f:
+            self.ui = uic.loadUi(f, self.main_window)
+
+        # set up ui
+        self.set_up_ui()
 
     def exec(self):
         self.app.exec()
 
-    def save_image(self, file_name):
-        Image.fromarray(np.uint8(self.actual)).save(file_name)
+    def set_up_ui(self):
+        # window properties
+        self.main_window.setFixedSize(1280, 720)
+        self.main_window.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+
+        # logo
+        logo_qpixmap = QtGui.QPixmap("ui/sie_logo.png")
+        self.ui.logo.setPixmap(logo_qpixmap)
+
+        # image preview
+        self.ui.image.setAlignment(QtCore.Qt.AlignCenter)
+        self.update_image()
+
+        # # buttons
+        self.ui.rotate_cw_btn.clicked.connect(self.rotate_cw)
+        self.ui.rotate_ccw_btn.clicked.connect(self.rotate_ccw)
+        self.ui.mirror_x_btn.clicked.connect(self.mirror_x)
+        self.ui.mirror_y_btn.clicked.connect(self.mirror_y)
+        self.ui.invert_colors_btn.clicked.connect(self.invert_colors)
+        self.ui.greyscale_btn.clicked.connect(self.greyscale)
+        self.ui.lighten_btn.clicked.connect(self.lighten)
+        self.ui.darken_btn.clicked.connect(self.darken)
+        self.ui.enhance_edges_btn.clicked.connect(self.enhance_edges)
+        self.ui.save_btn.clicked.connect(self.save_image)
+        self.ui.reset_btn.clicked.connect(self.reset_image)
+        self.ui.exit_btn.clicked.connect(self.app.exit)
+
+        # show window
+        self.main_window.show()
+
+    def update_image(self):
+        Image.fromarray(np.uint8(self.actual)).save("tmp.jpg")
+        image_qimage = QtGui.QImage("tmp.jpg")
+        os.remove("tmp.jpg")
+
+        if image_qimage.height() > self.ui.image.height() or image_qimage.width() > self.ui.image.width():
+            image_qpixmap = QtGui.QPixmap(image_qimage.scaled(self.ui.image.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        else:
+            image_qpixmap = QtGui.QPixmap(image_qimage)
+
+        self.ui.image.setPixmap(image_qpixmap)
+        self.ui.image.repaint()
+
+    def save_image(self):
+        if len(self.ui.save_tf.text()) is not 0:
+            Image.fromarray(np.uint8(self.actual)).save(str(self.ui.save_tf.text()) + "." + str(self.ui.format_cb.currentText()).lower())
 
     def reset_image(self):
         self.actual = self.original.copy()
+        self.update_image()
 
     def rotate_cw(self):
         self.actual = np.rot90(self.actual, -1)
+        self.update_image()
 
     def rotate_ccw(self):
         self.actual = np.rot90(self.actual)
+        self.update_image()
 
     def mirror_x(self):
         self.actual = self.actual[::-1]
+        self.update_image()
 
     def mirror_y(self):
         self.actual = self.actual[::, ::-1]
+        self.update_image()
 
     def invert_colors(self):
         self.actual = 255 - self.actual
+        self.update_image()
 
     def greyscale(self):
         for y in range(self.actual.shape[1]):
@@ -44,12 +103,15 @@ class SimpleImageEditor:
                 self.actual[x, y, 0] = grey_component
                 self.actual[x, y, 1] = grey_component
                 self.actual[x, y, 2] = grey_component
+        self.update_image()
 
     def lighten(self):
-        self.actual = self.actual + (256 - self.actual) * 0.2
+        self.actual = self.actual + (255 - self.actual) * 0.2
+        self.update_image()
 
     def darken(self):
         self.actual = self.actual * 0.75
+        self.update_image()
 
     def enhance_edges(self):
         new = self.actual.copy()
@@ -76,49 +138,4 @@ class SimpleImageEditor:
                     new[x, y, c] = component
 
         self.actual = new
-
-    def save_each(self):
-        # rotate cw
-        self.reset_image()
-        self.rotate_cw()
-        self.save_image("rotated_cw.jpg")
-
-        # rotate ccw
-        self.reset_image()
-        self.rotate_ccw()
-        self.save_image("rotated_ccw.jpg")
-
-        # mirror x
-        self.reset_image()
-        self.mirror_x()
-        self.save_image("mirrored_x.jpg")
-
-        # mirror y
-        self.reset_image()
-        self.mirror_y()
-        self.save_image("mirrored_y.jpg")
-
-        # invert colors
-        self.reset_image()
-        self.invert_colors()
-        self.save_image("inverted_colors.jpg")
-
-        # greyscale
-        self.reset_image()
-        self.greyscale()
-        self.save_image("greyscaled.jpg")
-
-        # lighten
-        self.reset_image()
-        self.lighten()
-        self.save_image("lightened.jpg")
-
-        # darken
-        self.reset_image()
-        self.darken()
-        self.save_image("darkened.jpg")
-
-        # enhance edges
-        self.reset_image()
-        self.enhance_edges()
-        self.save_image("enhanced_edges.jpg")
+        self.update_image()
