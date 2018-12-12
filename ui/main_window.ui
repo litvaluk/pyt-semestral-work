@@ -51,7 +51,7 @@
      <rect>
       <x>20</x>
       <y>600</y>
-      <width>221</width>
+      <width>230</width>
       <height>104</height>
      </rect>
     </property>
@@ -114,7 +114,14 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="2">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="open_btn">
+       <property name="text">
+        <string>Open</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
       <widget class="QPushButton" name="reset_btn">
        <property name="text">
         <string>Reset</string>

@@ -2,5 +2,5 @@
 
 from SimpleImageEditor import SimpleImageEditor
 
-sie = SimpleImageEditor("image.jpg")
+sie = SimpleImageEditor()
 sie.exec()
