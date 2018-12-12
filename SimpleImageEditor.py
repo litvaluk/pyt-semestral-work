@@ -70,6 +70,9 @@ class SimpleImageEditor:
     def save_image(self):
         if len(self.ui.save_tf.text()) is not 0:
             Image.fromarray(np.uint8(self.actual)).save(str(self.ui.save_tf.text()) + "." + str(self.ui.format_cb.currentText()).lower())
+            QtWidgets.QMessageBox.about(self.main_window, "Success", "Image has been saved successfully.")
+        else:
+            QtWidgets.QMessageBox.about(self.main_window, "Failure", "Save failed! Image name is not specified.")
 
     def reset_image(self):
         self.actual = self.original.copy()
