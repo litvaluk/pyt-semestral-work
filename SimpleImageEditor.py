@@ -29,6 +29,10 @@ class SimpleImageEditor:
         self.main_window.setFixedSize(1280, 720)
         self.main_window.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
 
+        # icon
+        icon = QtGui.QIcon("ui/sie_icon.png")
+        self.app.setWindowIcon(icon)
+
         # logo
         logo_qpixmap = QtGui.QPixmap("ui/sie_logo.png")
         self.ui.logo.setPixmap(logo_qpixmap)
