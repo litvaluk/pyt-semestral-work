@@ -30,7 +30,7 @@ class SimpleImageEditor:
     def set_up_ui(self):
         # window properties
         self.main_window.setFixedSize(1280, 720)
-        self.main_window.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMaximizeButtonHint)
+        self.main_window.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
 
         # icon
         icon = QtGui.QIcon("ui/sie_icon.png")
