@@ -138,13 +138,7 @@ class SimpleImageEditor:
         if self.actual is None:
             QtWidgets.QMessageBox.critical(self.main_window, "Failure", "Operation failed! No image opened.")
             return
-        for y in range(self.actual.shape[1]):
-            for x in range(self.actual.shape[0]):
-                grey_component = 0.299 * self.actual[x][y][0] + 0.587 * self.actual[x][y][1] + 0.114 * \
-                                 self.actual[x][y][2]
-                self.actual[x, y, 0] = grey_component
-                self.actual[x, y, 1] = grey_component
-                self.actual[x, y, 2] = grey_component
+        self.actual[:] = np.max(self.actual, axis=-1, keepdims=True) / 2 + np.min(self.actual, axis=-1, keepdims=True) / 2
         self.update_image()
 
     def lighten(self):
